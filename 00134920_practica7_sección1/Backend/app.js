@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import cors from "cors";
+import controllers from "./controllers/controllers.js";
 
 const app = express();
 const PORT = 5000;
@@ -44,5 +45,23 @@ app.get("/protected", verifyToken, (req, res) => {
   res.status(200).json({ message: "Protected data accessed", user: req.user });
 });
 
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`)
-);
+app.get('/', (request, response) => {
+  response.json({ info: 'Node.js, Express, and Postgres API' })
+})
+
+app.get('/users', controllers.getUsers)
+app.get('/users/:id', controllers.getUserById)
+app.post('/users', controllers.createUser)
+app.put('/users/:id', controllers.updateUser)
+app.delete('/users/:id', controllers.deleteUser)
+
+app.listen(PORT, () => console.log('Server running at http://localhost:${PORT}'));
+
+const generarHash = async () => {
+  const passwordOriginal = "1234";
+  const saltRounds = 10;
+
+  const hash = await bcrypt.hash(passwordOriginal, saltRounds);
+  console.log("Contraseña original:", passwordOriginal);
+  console.log("Hash generador:", hash)
+};
